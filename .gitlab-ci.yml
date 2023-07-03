@@ -1,0 +1,65 @@
+# Use gitlab docker image to deploy to s3
+stages:
+  - test
+  - deploy
+
+deploy:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  script:
+    - aws s3 ls careconnect.works
+    - aws sts get-caller-identity
+    - aws s3 sync . s3://careconnect.works
+  only:
+    - main
+
+frontend_gui_tests:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install --upgrade pip
+    - pip install selenium
+    - apt-get update -q -y
+    - apt-get --yes install libnss3
+    - apt-get --yes install libgconf-2-4
+    - apt-get install libx11-xcb1
+    - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    - apt-get update -q -y 
+    - apt-get install -y google-chrome-stable
+    - apt-get install -yqq unzip
+    - wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+    - unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+    # Run selenium tests
+    - python3 guitests.py
+
+frontend_jest_test:
+  stage: test
+  image: node:latest
+  script:
+    - cd my-app
+    - npm install --force
+    - npm run test
+
+backend_api_test:
+  stage: test
+  image: python:3.9
+  script:
+    - pip install requests
+    - pip install flask
+    - pip install flask_marshmallow
+    - pip install flask_sqlalchemy
+    - pip install flask_cors
+    - pip install pymysql
+    - pip install marshmallow_sqlalchemy
+    - cd back-end
+    - python3 tests.py
+
+postman_tests:
+  stage: test
+  image:
+    name: postman/newman_alpine33
+    entrypoint: [""]
+  script:
+    - newman --version
+    - newman run Postman.json

@@ -1,0 +1,39 @@
+.content{
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.074);
+    border: 1px solid rgba(255, 255, 255, 0.222);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: .7rem;
+    transition: all ease .3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    height: 100%; // Adjust the height value based on your requirements
+    .image-container {
+        padding: 1rem;
+        background-color: rgba(255, 255, 255, 0.074);
+        border: 1px solid rgba(255, 255, 255, 0.222);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border-radius: .7rem;
+        transition: all ease .3s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .youtube{
+        padding-bottom: 50px;
+        padding-top: 50px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%; // Adjust the height value based on your requirements
+        overflow: hidden;
+      }
+}
